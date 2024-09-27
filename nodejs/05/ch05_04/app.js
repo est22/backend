@@ -36,25 +36,30 @@ app.get("/create", (req, res) => {
   res.render("create");
 });
 
-app.use(express.urlencoded({ extended: true })); // post로 전달가능
 
 let maxId = 0;
-
-const getId = () => {
+const initId = () => {
   const result = fs.readFileSync("test.json", "utf-8");
   const data = JSON.parse(result);
-  const idList = data["result"].map((item) => item.id);
-  maxId = Math.max(idList);
+  const idList = data["result"].map((item) => parseInt(item.id));
+  maxId = Math.max(...idList);
 };
 
-getId();
+const getId = () => {
+    return ++maxId;
+};
+
+initId();
+
+app.use(express.urlencoded({ extended: true })); // post로 전달가능
 
 app.post("/create", (req, res) => {
   //   console.log(`/create post body: ${JSON.stringify(req.body)},${maxId}`);
   // req.body: [object Object]
   // JSON.stringify 하면: {"'title":"안녕하세요","author":"안리아","content":"불금입니다"}
   const result = fs.readFileSync("test.json", "utf-8");
-  let data = JSON.parse(result);
+    let data = JSON.parse(result);
+    
 
     const lastItem = data["result"].slice(-1); // last object array
     const lastId = lastItem[0].id + 1; // last object element
