@@ -29,6 +29,7 @@ db.serialize(() => {
   db.run(create_sql);
 });
 
+// list
 app.get("/list", (req, res) => {
   let sql = `select id, title, content, author, createdAt, count from posts order by 1 desc`;
   db.all(sql, [], (err, rows) => {
@@ -41,6 +42,7 @@ app.get("/list", (req, res) => {
   });
 });
 
+// view
 app.get("/view/:id", (req, res) => {
   const id = req.params.id;
   let sql = `select id, title, content, author, createdAt, count from posts where id = ${id}`;
@@ -58,7 +60,7 @@ app.get("/view/:id", (req, res) => {
   });
 });
 
-// CREATE DB
+// create
 app.get("/create", (req, res) => {
   res.render("create");
 });
@@ -79,28 +81,41 @@ app.post("/create", (req, res) => {
   });
 });
 
-//   data["result"].push(newPost);
-//   fs.writeFileSync("test.json", JSON.stringify(data), "utf-8");
-//   res.redirect("/list"); // redirect to list page
-// });
+// edit
+app.get("/edit/:id", (req, res) => {
+  const id = req.params.id;
+  let sql = `select id, title, content, author, createdAt, count from posts where id = ${id}`;
 
-// app.get("/edit/:id", (req, res) => {
-//   const id = req.params.id;
+  let countSql = `update posts set count = count + 1 where id = ${id}`;
+  db.run(countSql);
 
-//   const result = fs.readFileSync("test.json", "utf-8");
-//   const data = JSON.parse(result);
-//   let post = {};
-//   data["result"].forEach((item) => {
-//     if (item.id == id) {
-//       post = item;
-//     }
-//   });
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      res.status(500).send("Internal Server Error");
+    } else {
+      const post = rows[0];
+      res.render("edit", { post: post });
+    }
+  });
+});
 
-//   res.render("edit", { post: post });
-// });
+app.post("/edit/:id", (req, res) => {
+  const id = req.params.id;
+  let sql = `update posts set
+    title = '${req.body.title}',
+    content = '${req.body.content}',
+    author = '${req.body.author}'
+    where id = ${id}`;
 
-// app.post("/edit/:id", (req, res) => {
-//   const id = req.params.id;
+  db.run(sql, (err) => {
+    if (err) {
+      // console.log(err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.redirect(`/view/${id}`);
+    }
+  });
+});
 
 //   const result = fs.readFileSync("test.json", "utf-8");
 //   let data = JSON.parse(result);
