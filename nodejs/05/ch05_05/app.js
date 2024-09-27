@@ -41,66 +41,40 @@ app.get("/list", (req, res) => {
   });
 });
 
-// app.get("/view/:id", (req, res) => {
-//   const id = req.params.id;
+app.get("/view/:id", (req, res) => {
+  const id = req.params.id;
+  let sql = `select id, title, content, author, createdAt, count from posts where id = ${id}`;
 
-//   const data = fs.readFileSync("test.json", "utf-8");
-//   let result = JSON.parse(data);
-//   let post = {};
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      res.status(500).send("Internal Server Error");
+    } else {
+      const post = rows[0];
+      res.render("view", { post: post });
+    }
+  });
+});
 
-//   result["result"].forEach((item) => {
-//     if (item["id"] == id) {
-//       post = item;
-//       item.count = item.count + 1;
-//     }
-//   });
-//   fs.writeFileSync("test.json", JSON.stringify(result), "utf-8");
+// CREATE DB
+app.get("/create", (req, res) => {
+  res.render("create");
+});
 
-//   res.render("view", { post: post }); // 좌: 객체 프로퍼티 이름인 post // 우: post 라는 변수의 값
-//   // ejs에서 <%=post.[JSON 키값]%> 으로 접근
-// });
+app.use(express.urlencoded({ extended: true })); //  data from <form> -> post
 
-// app.get("/create", (req, res) => {
-//   res.render("create");
-// });
+app.post("/create", (req, res) => {
+  const createdAt = moment().format("YYYY-MM-DD");
+  let sql = `insert into posts(title, content, author, createdAt)
+  values('${req.body.title}','${req.body.content}','${req.body.author}', '${createdAt}')`;
 
-// let maxId = 0;
-// const initId = () => {
-//   const result = fs.readFileSync("test.json", "utf-8");
-//   const data = JSON.parse(result);
-//   const idList = data["result"].map((item) => parseInt(item.id));
-//   maxId = Math.max(...idList);
-// };
-
-// const getId = () => {
-//   return ++maxId;
-// };
-
-// initId();
-
-// app.use(express.urlencoded({ extended: true })); // form 태그로 전송된 데이터를 post로 전달가능
-
-// app.post("/create", (req, res) => {
-//   //   console.log(`/create post body: ${JSON.stringify(req.body)},${maxId}`);
-//   // req.body: [object Object]
-//   // JSON.stringify 하면: {"'title":"안녕하세요","author":"안리아","content":"불금입니다"}
-//   const result = fs.readFileSync("test.json", "utf-8");
-//   let data = JSON.parse(result);
-
-//   // const lastItem = data["result"].slice(-1); // last object array
-//   // const lastId = lastItem[0].id + 1; // last object element
-//   const lastId = getId();
-//   // console.log(`lastItem: ${lastItem},lastId: ${lastId}`)
-
-//   const createdAt = moment().format("YYYY-MM-DD");
-//   const newPost = {
-//     id: lastId,
-//     title: req.body.title,
-//     content: req.body.content,
-//     author: req.body.author,
-//     createdAt: createdAt,
-//     count: 0,
-//   };
+  db.run(sql, (err) => {
+    if (err) {
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.redirect("/list");
+    }
+  });
+});
 
 //   data["result"].push(newPost);
 //   fs.writeFileSync("test.json", JSON.stringify(data), "utf-8");
