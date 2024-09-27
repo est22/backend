@@ -19,14 +19,16 @@ app.get("/view/:id", (req, res) => {
   const id = req.params.id;
 
   const data = fs.readFileSync("test.json", "utf-8");
-  const result = JSON.parse(data);
+  let result = JSON.parse(data);
   let post = {};
-  const posts = result["result"];
-  posts.forEach((item) => {
+
+  result["result"].forEach((item) => {
     if (item["id"] == id) {
       post = item;
+      item.count = item.count + 1;
     }
   });
+  fs.writeFileSync("test.json", JSON.stringify(result), "utf-8");
 
   res.render("view", { post: post }); // 좌: 객체 프로퍼티 이름인 post // 우: post 라는 변수의 값
   // ejs에서 <%=post.[JSON 키값]%> 으로 접근
@@ -71,6 +73,7 @@ app.post("/create", (req, res) => {
     content: req.body.content,
     author: req.body.author,
     createdAt: createdAt,
+    count: 0,
   };
 
   data["result"].push(newPost);
@@ -104,6 +107,7 @@ app.post("/edit/:id", (req, res) => {
       item["title"] = req.body.title;
       item["content"] = req.body.content;
       item["author"] = req.body.author;
+      item["count"] = item["count"] ? item["count"] : 0;
     }
   }
   fs.writeFileSync("test.json", JSON.stringify(data), "utf-8");
@@ -122,9 +126,9 @@ app.get("/remove/:id", (req, res) => {
       removed_idx = i;
     }
   });
-    data["result"].splice(removed_idx, 1); // remove 
-    fs.writeFileSync('test.json', JSON.stringify(data), "utf-8");
-    res.redirect('/list');
+  data["result"].splice(removed_idx, 1); // remove
+  fs.writeFileSync("test.json", JSON.stringify(data), "utf-8");
+  res.redirect("/list");
 });
 
 app.listen(PORT, (req, res) => {
