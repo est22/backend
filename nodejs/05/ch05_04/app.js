@@ -93,23 +93,39 @@ app.get("/edit/:id", (req, res) => {
   res.render("edit", { post: post });
 });
 
-app.post("/edit/:id",
-  (req, res) => {
-    const id = req.params.id;
+app.post("/edit/:id", (req, res) => {
+  const id = req.params.id;
 
-    const result = fs.readFileSync("test.json", "utf-8");
-    let data = JSON.parse(result);
+  const result = fs.readFileSync("test.json", "utf-8");
+  let data = JSON.parse(result);
 
-    for (item of data["result"]) {
-      if (item["id"] == id) {
-        item["title"] = req.body.title;
-        item["content"] = req.body.content;
-        item["author"] = req.body.author;
-      }
+  for (item of data["result"]) {
+    if (item["id"] == id) {
+      item["title"] = req.body.title;
+      item["content"] = req.body.content;
+      item["author"] = req.body.author;
     }
-      fs.writeFileSync('test.json', JSON.stringify(data), 'utf-8');
-      res.redirect(`/view/${id}`);
+  }
+  fs.writeFileSync("test.json", JSON.stringify(data), "utf-8");
+  res.redirect(`/view/${id}`);
+});
+
+app.get("/remove/:id", (req, res) => {
+  const id = req.params.id;
+
+  const result = fs.readFileSync("test.json", "utf-8");
+  let data = JSON.parse(result);
+
+  let removed_idx = 0;
+  data["result"].forEach((e, i) => {
+    if (e["id"] == id) {
+      removed_idx = i;
+    }
   });
+    data["result"].splice(removed_idx, 1); // remove 
+    fs.writeFileSync('test.json', JSON.stringify(data), "utf-8");
+    res.redirect('/list');
+});
 
 app.listen(PORT, (req, res) => {
   console.log(`게시판 서버를 시작합니다.`);
