@@ -45,6 +45,9 @@ app.get("/view/:id", (req, res) => {
   const id = req.params.id;
   let sql = `select id, title, content, author, createdAt, count from posts where id = ${id}`;
 
+  let countSql = `update posts set count = count + 1 where id = ${id}`;
+  db.run(countSql);
+
   db.all(sql, [], (err, rows) => {
     if (err) {
       res.status(500).send("Internal Server Error");
