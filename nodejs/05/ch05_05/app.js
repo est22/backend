@@ -132,22 +132,18 @@ app.post("/edit/:id", (req, res) => {
 //   res.redirect(`/view/${id}`);
 // });
 
-// app.get("/remove/:id", (req, res) => {
-//   const id = req.params.id;
+app.get("/remove/:id", (req, res) => {
+  const id = req.params.id;
 
-//   const result = fs.readFileSync("test.json", "utf-8");
-//   let data = JSON.parse(result);
-
-//   let removed_idx = 0;
-//   data["result"].forEach((e, i) => {
-//     if (e["id"] == id) {
-//       removed_idx = i;
-//     }
-//   });
-//   data["result"].splice(removed_idx, 1); // remove
-//   fs.writeFileSync("test.json", JSON.stringify(data), "utf-8");
-//   res.redirect("/list");
-// });
+  let sql = `delete from posts where id = ${id}`;
+  db.run(sql, (err) => {
+    if (err) {
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.redirect("/list");
+    }
+  });
+});
 
 app.listen(PORT, (req, res) => {
   console.log(`게시판 서버를 시작합니다.`);
