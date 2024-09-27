@@ -36,7 +36,6 @@ app.get("/create", (req, res) => {
   res.render("create");
 });
 
-
 let maxId = 0;
 const initId = () => {
   const result = fs.readFileSync("test.json", "utf-8");
@@ -46,24 +45,24 @@ const initId = () => {
 };
 
 const getId = () => {
-    return ++maxId;
+  return ++maxId;
 };
 
 initId();
 
-app.use(express.urlencoded({ extended: true })); // post로 전달가능
+app.use(express.urlencoded({ extended: true })); // form 태그로 전송된 데이터를 post로 전달가능
 
 app.post("/create", (req, res) => {
   //   console.log(`/create post body: ${JSON.stringify(req.body)},${maxId}`);
   // req.body: [object Object]
   // JSON.stringify 하면: {"'title":"안녕하세요","author":"안리아","content":"불금입니다"}
   const result = fs.readFileSync("test.json", "utf-8");
-    let data = JSON.parse(result);
-    
+  let data = JSON.parse(result);
 
-    const lastItem = data["result"].slice(-1); // last object array
-    const lastId = lastItem[0].id + 1; // last object element
-    console.log(`lastItem: ${lastItem},lastId: ${lastId}`)
+  // const lastItem = data["result"].slice(-1); // last object array
+  // const lastId = lastItem[0].id + 1; // last object element
+  const lastId = getId();
+  // console.log(`lastItem: ${lastItem},lastId: ${lastId}`)
 
   const createdAt = moment().format("YYYY-MM-DD");
   const newPost = {
@@ -79,9 +78,38 @@ app.post("/create", (req, res) => {
   res.redirect("/list"); // redirect to list page
 });
 
-app.get("/edit", (req, res) => {
-  res.render("edit");
+app.get("/edit/:id", (req, res) => {
+  const id = req.params.id;
+
+  const result = fs.readFileSync("test.json", "utf-8");
+  const data = JSON.parse(result);
+  let post = {};
+  data["result"].forEach((item) => {
+    if (item.id == id) {
+      post = item;
+    }
+  });
+
+  res.render("edit", { post: post });
 });
+
+app.post("/edit/:id",
+  (req, res) => {
+    const id = req.params.id;
+
+    const result = fs.readFileSync("test.json", "utf-8");
+    let data = JSON.parse(result);
+
+    for (item of data["result"]) {
+      if (item["id"] == id) {
+        item["title"] = req.body.title;
+        item["content"] = req.body.content;
+        item["author"] = req.body.author;
+      }
+    }
+      fs.writeFileSync('test.json', JSON.stringify(data), 'utf-8');
+      res.redirect(`/view/${id}`);
+  });
 
 app.listen(PORT, (req, res) => {
   console.log(`게시판 서버를 시작합니다.`);
