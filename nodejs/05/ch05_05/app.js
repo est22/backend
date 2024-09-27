@@ -31,13 +31,28 @@ db.serialize(() => {
 
 // list
 app.get("/list", (req, res) => {
-  let sql = `select id, title, content, author, createdAt, count from posts order by 1 desc`;
-  db.all(sql, [], (err, rows) => {
+  let page = req.query.page ? parseInt(req.query.page) : 1;
+  const limit = 5;
+  const offset = (page - 1) * limit;
+
+  let sql = `select id, title, content, author, createdAt, count from posts order by 1 desc limit ? offset ? `;
+  db.all(sql, [limit, offset], (err, rows) => {
     if (err) {
       res.status(500).send("Internal Server Error");
     } else {
-      console.log(JSON.stringify(rows));
-      res.render("list", { posts: rows });
+      db.get(`select count(1) as count from posts`, (err, row) => {
+        if (err) {
+          res.status(500).send("Internal Server Error");
+        } else {
+          const total = row.count;
+          const totalPage = Math.ceil(total / limit);
+          res.render("list", {
+            posts: rows,
+            currentPage: page,
+            totalPage: totalPage
+          });
+        }
+      });
     }
   });
 });
