@@ -29,12 +29,17 @@ db.serialize(() => {
   db.run(create_sql);
 });
 
-// app.get("/list", (req, res) => {
-//   const data = fs.readFileSync("test.json", "utf-8");
-//   const result = JSON.parse(data);
-
-//   res.render("list", { posts: result["result"] });
-// });
+app.get("/list", (req, res) => {
+  let sql = `select id, title, content, author, createdAt, count from posts order by 1 desc`;
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      res.status(500).send("Internal Server Error");
+    } else {
+      console.log(JSON.stringify(rows));
+      res.render("list", { posts: rows });
+    }
+  });
+});
 
 // app.get("/view/:id", (req, res) => {
 //   const id = req.params.id;
