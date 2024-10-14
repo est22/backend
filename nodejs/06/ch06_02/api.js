@@ -56,8 +56,24 @@ app.get("/posts", (req, res) => {
 });
 // 2. GET /posts/1 게시글 상세
 app.get("/posts/:id", (req, res) => {});
+
 // 3. POST /posts 게시글 쓰기
-app.post("/posts", (req, res) => {});
+app.post("/posts", (req, res) => {
+  const { title, content, author } = req.body;
+
+  let sql = `
+        INSERT INTO posts(title, content, author) values (?,?,?)
+        `;
+
+  db.run(sql, [title, content, author], (err) => {
+    if (err) {
+      res.status(500).send(err.message);
+    }
+    console.log(`row id: ${this.lastId}`);
+    res.json({ result: "success", id: this.lastId });
+  });
+});
+
 // 4. PUT /posts/1 게시글 수정
 app.put("/posts/:id", (req, res) => {});
 // 5. DELETE /posts/1 게시글 삭제
