@@ -55,7 +55,22 @@ app.get("/posts", (req, res) => {
   });
 });
 // 2. GET /posts/1 게시글 상세
-app.get("/posts/:id", (req, res) => {});
+app.get("/posts/:id", (req, res) => {
+  const id = req.params.id;
+  let sql = `SELECT id, title, content, author, createdAt, count FROM posts WHERE id = ?`;
+  let count_sql = `UPDATE posts SET count = count + 1 WHERE id = ?`;
+  db.run(count_sql, [id], (err) => {
+    if (err) {
+      res.status(500).send(err.message);
+    }
+    db.get(sql, [id], (err1, row) => {
+      if (err1) {
+        res.status(500).send(err1.message);
+      }
+      res.json({ item: row });
+    });
+  });
+});
 
 // 3. POST /posts 게시글 쓰기
 app.post("/posts", (req, res) => {
@@ -69,8 +84,8 @@ app.post("/posts", (req, res) => {
     if (err) {
       res.status(500).send(err.message);
     }
-    console.log(`row id: ${this.lastId}`);
-    res.json({ result: "success", id: this.lastId });
+    console.log(`row id: ${this.lastID}`);
+    res.json({ result: "success", id: this.lastID });
   });
 });
 
