@@ -51,6 +51,18 @@ app.post("/posts", (req, res) => {
     .json({ id: result.lastInsertRowId, title: title, content: content });
 });
 
+// 2. GET /posts/1 게시글 상세
+app.get("/posts/:id", (req, res) => {
+  const id = req.params.id;
+  let sql = `SELECT id, title, content, author, createdAt, count FROM posts WHERE id = ?`;
+  let count_sql = `UPDATE posts SET count = count + 1 WHERE id = ?`;
+  db.prepare(count_sql).run(id); // method chaining
+    // const stmt = db.prepare(count_sql)
+    // stmt.run(id)
+  const post = db.prepare(sql).get(id);
+  res.status(200).json({ item: post });
+});
+
 app.listen(PORT, () => {
   console.log(`server list listening on port ${PORT}...`);
 });
