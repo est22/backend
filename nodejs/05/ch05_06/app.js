@@ -5,11 +5,13 @@ const expressSession = require("express-session");
 const app = express();
 const PORT = 3000;
 
+
+app.set("view engine", "ejs");
+app.use(express.static("public"));
 // cookie and session assign middleWare
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.set("view engine", "ejs");
-app.use(express.static("public"));
+
 
 // session setting
 app.use(
