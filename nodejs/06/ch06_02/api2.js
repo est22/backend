@@ -48,7 +48,7 @@ app.post("/posts", (req, res) => {
   console.log(`${JSON.stringify(result)}`); // debug
   res
     .status(201)
-    .json({ id: result.lastInsertRowId, title: title, content: content });
+    .json({ id: result.lastInsertRowid, title: title, content: content });
 });
 
 // 2. GET /posts/1 게시글 상세
