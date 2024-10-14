@@ -57,10 +57,29 @@ app.get("/posts/:id", (req, res) => {
   let sql = `SELECT id, title, content, author, createdAt, count FROM posts WHERE id = ?`;
   let count_sql = `UPDATE posts SET count = count + 1 WHERE id = ?`;
   db.prepare(count_sql).run(id); // method chaining
-    // const stmt = db.prepare(count_sql)
-    // stmt.run(id)
+  // const stmt = db.prepare(count_sql)
+  // stmt.run(id)
   const post = db.prepare(sql).get(id);
   res.status(200).json({ item: post });
+});
+
+// 4. PUT /posts/1 게시글 수정
+app.put("/posts/:id", (req, res) => {
+  const id = req.params.id;
+  const { title, content } = req.body;
+  let sql = `
+    UPDATE posts set title = ?, content = ? where id = ?`;
+  try {
+    const result = db.prepare(sql).run(title, content, id);
+    console.log(`result => ${JSON.stringify(result)}`);
+    if (result.changes) {
+      res.status(200).json({ result: "success" });
+    } else {
+      res.status(404).json({ error: "post is not found" });
+    }
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
 });
 
 app.listen(PORT, () => {
