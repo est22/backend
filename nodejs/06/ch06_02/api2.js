@@ -20,6 +20,14 @@ const create_sql = `
         createdAt datetime default current_timestamp,
         count integer default 0
     );
+
+
+    CREATE TABLE IF NOT EXISTS comments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        content TEXT NOT NULL,
+        postId INTEGER,
+        FOREIGN KEY(postId) REFERENCES posts(id)
+        );
 `;
 
 db.exec(create_sql);
