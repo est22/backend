@@ -90,9 +90,29 @@ app.post("/posts", (req, res) => {
 });
 
 // 4. PUT /posts/1 게시글 수정
-app.put("/posts/:id", (req, res) => {});
+app.put("/posts/:id", (req, res) => {
+  const id = req.params.id;
+  const { title, content } = req.body;
+  let sql = `
+    UPDATE posts set title = ?, content = ? where id = ?`;
+  db.run(sql, [title, content, id], (err) => {
+    if (err) {
+      res.status(500).send(err.message);
+    }
+    res.json({ result: "success" });
+  });
+});
 // 5. DELETE /posts/1 게시글 삭제
-app.delete("/posts/:id", (req, res) => {});
+app.delete("/posts/:id", (req, res) => {
+  const id = req.params.id;
+  let sql = `DELETE from posts where id = ?`;
+  db.run(sql, [id], (err) => {
+    if (err) {
+      res.status(500).send(err.message);
+    }
+    res.json({ result: "success" });
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`server list listening on port ${PORT}...`);
