@@ -26,5 +26,10 @@ const User = sequelize.define("User", {
 (async () => {
   // await를 사용하기 위해서 빈 async 함수를 정의 및 호출
   // 실제 모델 생성, 데이터 생성, 데이터를 가져오는 연습
-  await sequelize.sync({ force: true });
+  await sequelize.sync({ force: false });
+  const user1 = await User.create({
+    username: "User01",
+    email: "user01@gmail.com",
+  });
+  console.log(`user created: ${JSON.stringify(user1)}`);
 })();
