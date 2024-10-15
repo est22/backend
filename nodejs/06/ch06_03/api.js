@@ -56,6 +56,7 @@ const schema = buildSchema(`
     type Mutation {
         createPost(input: PostInput): Post
         updatePost(id: ID!, input:PostInput): Post
+        deletePost(id: ID!): String
     }
 
 
@@ -83,8 +84,13 @@ const root = {
       `update posts set title = ?, content = ? 
           where id = ?`
     );
-      const info = stmt.run(input.title, input.content, id);
-      return { id, ...input }; // ... => input에 있는 딕셔너리를 복사해서 flat하게 넣어라
+    const info = stmt.run(input.title, input.content, id);
+    return { id, ...input }; // ... => input에 있는 딕셔너리를 복사해서 flat하게 넣어라
+  },
+  deletePost: ({ id }) => {
+    const stmt = db.prepare(`delete from posts where id = ?`);
+    const info = stmt.run(id);
+    return `Post[${id}] is deleted`;
   },
 };
 
