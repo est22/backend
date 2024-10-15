@@ -44,6 +44,7 @@ const schema = buildSchema(`
 
     type Query {
         getPosts: [Post]
+        getPost(id: ID!): Post
     }
 
     type Mutation {
@@ -64,11 +65,14 @@ const root = {
     }
 };
 
-app.use("/graphql", graphqlHTTP({
+app.use(
+  "/graphql",
+  graphqlHTTP({
     schema: schema,
     rootValue: root,
     graphiql: true,
-}));
+  })
+);
 
 // run server
 app.listen(PORT);
