@@ -47,9 +47,6 @@ const schema = buildSchema(`
         getPost(id: ID!): Post
     }
 
-    type Mutation {
-        createPost(input: PostInput): Post
-    }
     `);
 
 // resolver
@@ -57,12 +54,11 @@ const root = {
   getPosts: () => {
     const stmt = db.prepare(`select * from posts`);
     return stmt.all();
-    },
-    createPost: ({ input }) => {
-        const stmt = db.prepare(`insert into posts (title, content, authour) values (?,?,?)`)
-        const info = stmt.run(input.title, input.content, input.author)
-        return {id: info.lastInsertRowid, ...input}
-    }
+  },
+  getPost: ({ id }) => {
+    const stmt = db.prepare(`select * from posts where id = ? `);
+    return stmt.get(id);
+  },
 };
 
 app.use(
