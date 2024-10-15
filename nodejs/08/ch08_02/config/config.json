@@ -1,14 +1,14 @@
 {
   "development": {
     "storage": "post.db",
-    "dialect": "sqlite3"
+    "dialect": "sqlite"
   },
   "test": {
     "storage": "post.db",
-    "dialect": "sqlite3"
+    "dialect": "sqlite"
   },
   "production": {
     "storage": "post.db",
-    "dialect": "sqlite3"
+    "dialect": "sqlite"
   }
 }
