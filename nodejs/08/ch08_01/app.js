@@ -47,5 +47,19 @@ const User = sequelize.define("User", {
       username: "user01",
     },
   });
-    console.log(`user01: ${JSON.stringify(user)}`)
+    console.log(`user01: ${JSON.stringify(user)}`);
+    
+  // update User set email = 'user01@naver.com' where username = 'user01'
+  await User.update(
+    {
+      email: "user01@naver.com",
+    },
+    {
+      where: {
+        username: "user01",
+      },
+    }
+  );
+    
+    
 })();
