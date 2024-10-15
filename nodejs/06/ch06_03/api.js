@@ -45,6 +45,10 @@ const schema = buildSchema(`
     type Query {
         getPosts: [Post]
     }
+
+    type Mutation {
+        createPost(input: PostInput): Post
+    }
     `);
 
 // resolver
@@ -52,7 +56,12 @@ const root = {
   getPosts: () => {
     const stmt = db.prepare(`select * from posts`);
     return stmt.all();
-  },
+    },
+    createPost: ({ input }) => {
+        const stmt = db.prepare(`insert into posts (title, content, authour) values (?,?,?)`)
+        const info = stmt.run(input.title, input.content, input.author)
+        return {id: info.lastInsertRowid, ...input}
+    }
 };
 
 app.use("/graphql", graphqlHTTP({
