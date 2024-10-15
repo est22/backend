@@ -55,6 +55,7 @@ const schema = buildSchema(`
 
     type Mutation {
         createPost(input: PostInput): Post
+        updatePost(id: ID!, input:PostInput): Post
     }
 
 
@@ -76,6 +77,14 @@ const root = {
     );
     const info = stmt.run(input.title, input.content, input.author);
     return { id: info.lastInsertRowid, ...input };
+  },
+  updatePost: ({ id, input }) => {
+    const stmt = db.prepare(
+      `update posts set title = ?, content = ? 
+          where id = ?`
+    );
+      const info = stmt.run(input.title, input.content, id);
+      return { id, ...input }; // ... => input에 있는 딕셔너리를 복사해서 flat하게 넣어라
   },
 };
 
