@@ -42,10 +42,21 @@ const schema = buildSchema(`
     createdAt: String
     }
 
+    input PostInput {
+    title: String!
+    content: String!
+    author: String!
+    }
+
     type Query {
         getPosts: [Post]
         getPost(id: ID!): Post
     }
+
+    type Mutation {
+        createPost(input: PostInput): Post
+    }
+
 
     `);
 
@@ -58,6 +69,13 @@ const root = {
   getPost: ({ id }) => {
     const stmt = db.prepare(`select * from posts where id = ? `);
     return stmt.get(id);
+  },
+  createPost: ({ input }) => {
+    const stmt = db.prepare(
+      `insert into posts (title, content, author) values (?,?,?)`
+    );
+    const info = stmt.run(input.title, input.content, input.author);
+    return { id: info.lastInsertRowid, ...input };
   },
 };
 
