@@ -1,0 +1,59 @@
+type Query { // 예약어
+    hello: String
+    getPost(id: ID!): Post
+}
+
+type Post { // 커스텀 자료형 
+    id: ID!
+    title: String!
+    content: String!
+}
+
+type Mutation { // 예약어
+    createPost(input: PostInput): Post
+    updatePost(id: ID!, input: PostInput) : Post
+    deletePost(id: ID!)
+}
+
+input PostInput {
+    title: String!
+    content: String!
+}
+
+// 기본 타입
+// Int: 32bit 정수형
+// Float: 부동 소수점 숫자
+// String
+// Boolean
+// ID: 고유 식별자(문자열)
+// 커스텀 타입
+
+
+{ // hello 데이터를 가져오고, id가 1번인 게시글의 데이터를 요청하는 쿼리문
+    hello
+    getPost(id: "1") {
+        id
+        title
+        content
+    }
+}
+
+mutation { // QL 요청 -> 게시글 생성 요청 (insert, update, delete)
+    createPost(input: {title: "New Post", content" "New Content"}) {
+        id
+        title
+        content
+    }
+}
+
+
+// QL 응답 -> 게시글 생성 후 응답 결과
+{
+    "data": {
+        "createPost": {
+            "id":2,
+            "title":"New Post",
+            "content":"New Content"
+        }
+    }
+}
