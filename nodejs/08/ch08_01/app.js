@@ -32,7 +32,7 @@ const User = sequelize.define("User", {
   await sequelize.sync({ force: false });
   // = insert into Users(username, email) values ('user01', 'user01@gmail.com');
   const user1 = await User.create({
-    username: "User01",
+    username: "user01",
     email: "user01@gmail.com",
   });
   console.log(`user created: ${JSON.stringify(user1)}`);
@@ -60,6 +60,15 @@ const User = sequelize.define("User", {
       },
     }
   );
+    
+    
+    // delete
+    await User.destroy({
+        where: {
+            username: 'user01',
+
+        },
+    })
     
     
 })();
