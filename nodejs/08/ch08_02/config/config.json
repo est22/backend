@@ -1,0 +1,14 @@
+{
+  "development": {
+    "storage": "post.db",
+    "dialect": "sqlite3"
+  },
+  "test": {
+    "storage": "post.db",
+    "dialect": "sqlite3"
+  },
+  "production": {
+    "storage": "post.db",
+    "dialect": "sqlite3"
+  }
+}
