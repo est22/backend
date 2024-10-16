@@ -41,7 +41,24 @@ app.put("/posts/:id", async (req, res) => {
     post.title = title;
     post.content = content;
     await post.save();
-    res.status(200).json({data: post});
+    res.status(200).json({ data: post });
+  } else {
+    res.status(404).json({ result: "post not found" });
+  }
+});
+
+app.delete("/posts/:id", async (req, res) => {
+  // delete from posts;
+  // 참고: models.Post.destroyAll() - 한줄씩 지울때
+  // 참고: models.Post.truncate() - 통으로 날릴때
+  const result = await models.Post.destroy({
+    where: {
+      id: req.params.id,
+    },
+  });
+  console.log(`destroyed result: ${result}`);
+  if (result) {
+    res.status(204).send();
   } else {
     res.status(404).json({ result: "post not found" });
   }
