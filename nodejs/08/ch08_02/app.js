@@ -19,7 +19,9 @@ app.post("/posts", async (req, res) => {
 
 app.get("/posts", async (req, res) => {
   // select * from posts;
-  const posts = await models.Post.findAll();
+  const posts = await models.Post.findAll({
+    include: [{ model: models.Post }],
+  });
   res.json({ data: posts });
 });
 
