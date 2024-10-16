@@ -17,6 +17,12 @@ app.post("/posts", async (req, res) => {
   res.status(201).json(post);
 });
 
+app.get("/posts", async (req, res) => {
+  // select * from posts;
+  const posts = await models.Post.findAll();
+  res.json({ data: posts });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}...`);
   models.sequelize
