@@ -19,7 +19,17 @@ app.post("/posts", async (req, res) => {
 
 app.get("/posts", async (req, res) => {
   // select * from posts;
-  const posts = await models.Post.findAll();
+  const posts = await models.Post
+    .findAll
+    // {
+    // include: [
+    //   {
+    //     model: models.Comment,
+    //     require: true,
+    //   }
+    // ]
+    // }
+    ();
   res.json({ data: posts });
 });
 
@@ -82,6 +92,19 @@ app.get("/posts/:id/comments", async (req, res) => {
     },
   });
   res.status(200).json({ data: comments });
+});
+
+app.put("/comments/:id", async (req, res) => {
+  const id = req.params.id;
+  const { content } = req.body;
+  const comment = await models.Comment.findByPk(id);
+  if (comment) {
+    comment.content = content;
+    await comment.save();
+    res.json({ data: comment });
+  } else {
+    res.status(404).json({ result: "comment is not found" });
+  }
 });
 
 app.listen(PORT, () => {
