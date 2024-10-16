@@ -64,6 +64,16 @@ app.delete("/posts/:id", async (req, res) => {
   }
 });
 
+app.post("/posts/:id/comments", async (req, res) => {
+  const postId = req.params.id; // Post의 ID
+  const { content } = req.body;
+  const comment = await models.Comment.create({
+    PostId: postId,
+    content: content,
+  });
+  res.status(201).json({ data: comment });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}...`);
   models.sequelize
