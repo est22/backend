@@ -74,6 +74,16 @@ app.post("/posts/:id/comments", async (req, res) => {
   res.status(201).json({ data: comment });
 });
 
+app.get("/posts/:id/comments", async (req, res) => {
+  const postId = req.params.id;
+  const comments = await models.Comment.findAll({
+    where: {
+      PostId: postId,
+    },
+  });
+  res.status(200).json({ data: comments });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}...`);
   models.sequelize
