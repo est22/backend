@@ -78,15 +78,14 @@ app.post("/posts/:id/comments", async (req, res) => {
 
 app.get("/posts/:id/comments", async (req, res) => {
   const postId = req.params.id;
+  console.log(`postId: ${postId}`);
   const comments = await models.Comment.findAll(
-    {
-      include: [{ model: models.Post }],
+  {
+    where: {
+      PostId: postId, // 여기에 조건을 추가
     },
-    {
-      where: {
-        PostId: postId,
-      },
-    }
+    include: [{ model: models.Post }], // 필요한 경우에만 추가
+  }
   );
   res.status(200).json({ data: comments });
 });
