@@ -107,6 +107,20 @@ app.put("/comments/:id", async (req, res) => {
   }
 });
 
+app.delete("/comments/:id", async (req, res) => {
+  const id = req.params.id;
+  const result = await models.Comment.destroy({
+    where: {
+      id: id,
+    },
+  });
+  if (result) {
+    res.status(204).send();
+  } else {
+    res.status(404).json({ result: "comment not found" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}...`);
   models.sequelize
