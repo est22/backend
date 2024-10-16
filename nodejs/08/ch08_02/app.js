@@ -33,6 +33,20 @@ app.get("/posts/:id", async (req, res) => {
   }
 });
 
+app.put("/posts/:id", async (req, res) => {
+  const id = req.params.id;
+  const { title, content } = req.body;
+  const post = await models.Post.findByPk(id);
+  if (post) {
+    post.title = title;
+    post.content = content;
+    await post.save();
+    res.status(200).json({data: post});
+  } else {
+    res.status(404).json({ result: "post not found" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}...`);
   models.sequelize
