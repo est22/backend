@@ -19,17 +19,7 @@ app.post("/posts", async (req, res) => {
 
 app.get("/posts", async (req, res) => {
   // select * from posts;
-  const posts = await models.Post
-    .findAll
-    // {
-    // include: [
-    //   {
-    //     model: models.Comment,
-    //     require: true,
-    //   }
-    // ]
-    // }
-    ();
+  const posts = await models.Post.findAll();
   res.json({ data: posts });
 });
 
@@ -86,11 +76,16 @@ app.post("/posts/:id/comments", async (req, res) => {
 
 app.get("/posts/:id/comments", async (req, res) => {
   const postId = req.params.id;
-  const comments = await models.Comment.findAll({
-    where: {
-      PostId: postId,
+  const comments = await models.Comment.findAll(
+    {
+      include: [{ model: models.Post }],
     },
-  });
+    {
+      where: {
+        PostId: postId,
+      },
+    }
+  );
   res.status(200).json({ data: comments });
 });
 
