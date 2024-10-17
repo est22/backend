@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
 
       content: DataTypes.STRING,
       author: DataTypes.STRING(50),
+      filename: DataTypes.STRING
     },
     {
       tableName: "Board", // optional. 없을 시 Post로 생성
@@ -33,6 +34,6 @@ module.exports = (sequelize, DataTypes) => {
   Post.associate = function (models) {
     Post.hasMany(models.Comment);
   };
-  
+
   return Post;
 };
