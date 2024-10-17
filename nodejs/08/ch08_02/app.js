@@ -1,21 +1,42 @@
 const express = require("express");
 const path = require("path");
 const models = require("./models");
+const multer = require("multer");
 
 const app = express();
 const PORT = 3000;
 app.use(express.json());
-app.use(express.urlencoded({ extends: true })); // application/x-www-form-urlencoded
-// name=value1&name2=value2
-// Content-type: multipart/form-data -> image, file, name=value1&name2=value2
+app.use(express.urlencoded({ extended: true })); // for file attachment
+// directory for upload and download
+app.use("/downloads", express.static(path.join(__dirname, "pulbic/uploads")));
 
-app.post("/posts", async (req, res) => {
+const upload_dir = `public/uploads`;
+const storage = multer.diskStorage({
+  destination: `./${upload_dir}`, // ./public/uploads/
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      path.parse(file.originalname).name +
+        "-" +
+        Date.now() +
+        path.extname(file.originalname)
+    );
+  }, // test.png -> test-202410201010.png
+});
+
+// 위에서 설정한 파일을 storage로 보내주는 역할
+const upload = multer({ storage: storage });
+
+app.post("/posts", upload.single("file"), async (req, res) => {
   const { title, content, author } = req.body;
+  let filename = req.file ? req.file.filename : null;
+  filename = `/downloads/${filename}`; // test-202410010101.png
   console.log(`title:${title}`);
   const post = await models.Post.create({
     title: title,
     content: content,
     author: author,
+    filename: filename,
   });
   res.status(201).json(post);
 });
@@ -82,14 +103,12 @@ app.post("/posts/:id/comments", async (req, res) => {
 app.get("/posts/:id/comments", async (req, res) => {
   const postId = req.params.id;
   console.log(`postId: ${postId}`);
-  const comments = await models.Comment.findAll(
-  {
+  const comments = await models.Comment.findAll({
     where: {
       PostId: postId, // 여기에 조건을 추가
     },
     include: [{ model: models.Post }], // 필요한 경우에만 추가
-  }
-  );
+  });
   res.status(200).json({ data: comments });
 });
 
