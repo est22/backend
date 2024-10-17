@@ -63,9 +63,14 @@ app.put("/posts/:id", async (req, res) => {
   const id = req.params.id;
   const { title, content } = req.body;
   const post = await models.Post.findByPk(id);
+  let filename = req.file ? req.file.filename : null;
+  filename = `/downloads/${filename}`;
   if (post) {
     post.title = title;
     post.content = content;
+    if (req.file) {
+      post.filename = filename;
+    }
     await post.save();
     res.status(200).json({ data: post });
   } else {
