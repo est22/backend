@@ -41,8 +41,9 @@ const updatePost = async (req, res) => {
   try {
     // postman으로 보낼 때 {"title":"a","content":"b","userId":2} // http://localhost:3000/posts/1
     const post = await postService.updatePost(req.params.id, req.body);
-    if (post) {
-      res.status(200).json({ data: posts });
+    if (post) { // result: 1 or 0
+        res.status(200).json({data: "successfully added post"});
+        
     } else {
       res.status(404).json({ data: "Post not found" });
     }
