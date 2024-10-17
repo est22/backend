@@ -5,6 +5,9 @@ const models = require("./models");
 const app = express();
 const PORT = 3000;
 app.use(express.json());
+app.use(express.urlencoded({ extends: true })); // application/x-www-form-urlencoded
+// name=value1&name2=value2
+// Content-type: multipart/form-data -> image, file, name=value1&name2=value2
 
 app.post("/posts", async (req, res) => {
   const { title, content, author } = req.body;
