@@ -5,7 +5,12 @@ const createPost = async (req, res) => {
   // 게시글 작성
   try {
     // {"title":"a","content","b","userId":2} = req.body
-    const post = await postService.createPost(req.body);
+    const user = req.user;
+    const post = await postService.createPost({
+      title: req.body.title,
+      content: req.body.content,
+      userId: user.id,
+    });
     res.status(201).json({ data: post });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -41,9 +46,9 @@ const updatePost = async (req, res) => {
   try {
     // postman으로 보낼 때 {"title":"a","content":"b","userId":2} // http://localhost:3000/posts/1
     const post = await postService.updatePost(req.params.id, req.body);
-    if (post) { // result: 1 or 0
-        res.status(200).json({data: "successfully added post"});
-        
+    if (post) {
+      // result: 1 or 0
+      res.status(200).json({ data: "successfully added post" });
     } else {
       res.status(404).json({ data: "Post not found" });
     }
