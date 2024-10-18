@@ -28,4 +28,29 @@ const Post = mongoose.model("Post", PostSchema);
 const app = express();
 app.use(express.json());
 
+app.post("/posts", async (req, res) => {
+  const { title, content, author } = req.body;
+
+  try {
+    const post = new Post({
+      title: title,
+      content: content,
+      author: author,
+    });
+    post.save();
+    res.status(201).json({ data: post });
+  } catch (e) {
+    res.status(500).json({ error: error });
+  }
+});
+
+app.get("/posts", async (req, res) => {
+  try {
+    const posts = await Post.find({});
+    res.json({ data: posts });
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+});
+
 app.listen(3000);
