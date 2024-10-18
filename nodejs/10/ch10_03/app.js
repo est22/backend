@@ -1,11 +1,13 @@
 const express = require("express");
 const postRoute = require("./routes/postRoute");
+const authRoute = require("./routes/authRoute");
 const models = require("./models");
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
-app.use("/posts", postRoute); //
+app.use("/posts", postRoute);
+app.use("/auth", authRoute);
 
 app.listen(PORT, () => {
   models.sequelize
