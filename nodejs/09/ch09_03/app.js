@@ -88,4 +88,22 @@ app.delete("/posts/:id", async (req, res) => {
   }
 });
 
+app.post("/posts/:id/comments", async (req, res) => {
+  const { id } = req.params;
+  const { comment, author } = req.body;
+  try {
+    const post = await Post.updateOne(
+      {
+        _id: id,
+      },
+      {
+        $push: { comments: { comment: comment, author: author } },
+      }
+    );
+    res.status(200).json({ data: post });
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+});
+
 app.listen(3000);
