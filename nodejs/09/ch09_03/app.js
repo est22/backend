@@ -106,4 +106,22 @@ app.post("/posts/:id/comments", async (req, res) => {
   }
 });
 
+app.delete("/posts/:id/comments/:cid", async (req, res) => {
+  const { id, cid } = req.params;
+
+  try {
+    const post = await Post.updateOne(
+      {
+        _id: id,
+      },
+      {
+        $pull: { comments: { _id: cid } },
+      }
+    );
+    res.status(200).json({ data: post });
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+});
+
 app.listen(3000);
