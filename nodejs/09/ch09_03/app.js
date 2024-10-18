@@ -53,4 +53,39 @@ app.get("/posts", async (req, res) => {
   }
 });
 
+app.get("/posts/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const post = await Post.findById(id);
+    res.json({ data: post });
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+});
+
+app.put("/posts/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title, content } = req.body;
+  try {
+    const post = await Post.findByIdAndUpdate(id, {
+      title,
+      content,
+    });
+    res.status(200).json({ data: post });
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+});
+
+app.delete("/posts/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const post = await Post.findByIdAndDelete(id);
+    res.status(200).json({ data: post });
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+});
+
 app.listen(3000);
