@@ -1,7 +1,18 @@
 const bcrypt = require("bcryptjs");
 const userService = require("../services/userService");
 const { generateAccessToken, generateRefreshToken } = require("../utils/token");
+const jwt = require("jsonwebtoken");
 
+const refresh = (req, res) => {
+  const { token } = req.body;
+  if (!token) return res.sendStatus(401);
+  jwt.verify(token, "refresh_secret", (err, user) => {
+    if (err) return res.sendStatus(403);
+
+    const accessToken = generateAccessToken(user);
+    res.json(accessToken);
+  });
+};
 const login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -17,8 +28,8 @@ const login = async (req, res) => {
     const refreshToken = generateRefreshToken(user);
     res.json({
       accessToken,
-      refreshToken
-    })
+      refreshToken,
+    });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -44,4 +55,5 @@ const register = async (req, res) => {
 module.exports = {
   register,
   login,
+  refresh,
 };
